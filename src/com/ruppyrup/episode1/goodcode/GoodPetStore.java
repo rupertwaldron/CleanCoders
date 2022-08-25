@@ -53,12 +53,15 @@ public class GoodPetStore {
 
 class TestGoodPetStore {
 
+    private static final String SNAKE = "Snake";
+    private static final String DOG = "Dog";
+    private static final String FIDO = "Fido";
+    private static final String SIMON = "Simon";
     private GoodPetStore petStore;
-    private PetFactory petFactory;
 
     @BeforeEach
     void setup() {
-        petFactory = new PetFactory();
+        PetFactory petFactory = new PetFactory();
         petStore = new GoodPetStore(petFactory);
     }
 
@@ -74,44 +77,44 @@ class TestGoodPetStore {
 
     @Test
     void canStockAPet() {
-        petStore.stockAPet("Dog", "Fido");
-        Pet pet = petStore.sellPet("Dog").get();
+        petStore.stockAPet(DOG, FIDO);
+        Pet pet = petStore.sellPet(DOG).orElseThrow();
         Assertions.assertTrue(pet instanceof Dog);
-        Assertions.assertEquals("Fido", pet.getPetName());
+        Assertions.assertEquals(FIDO, pet.getPetName());
     }
 
     @Test
     void canStockTwoPets() {
-        petStore.stockAPet("Dog", "Fido");
-        petStore.stockAPet("Snake", "Simon");
-        Pet dog = petStore.sellPet("Dog").get();
-        Pet snake = petStore.sellPet("Snake").get();
+        petStore.stockAPet(DOG, FIDO);
+        petStore.stockAPet(SNAKE, SIMON);
+        Pet dog = petStore.sellPet(DOG).orElseThrow();
+        Pet snake = petStore.sellPet(SNAKE).orElseThrow();
         Assertions.assertTrue(dog instanceof Dog);
-        Assertions.assertEquals("Fido", dog.getPetName());
+        Assertions.assertEquals(FIDO, dog.getPetName());
         Assertions.assertTrue(snake instanceof Snake);
-        Assertions.assertEquals("Simon", snake.getPetName());
+        Assertions.assertEquals(SIMON, snake.getPetName());
     }
 
     @Test
     void canClearThePetShop() {
-        petStore.stockAPet("Dog", "Fido");
-        petStore.stockAPet("Snake", "Simon");
+        petStore.stockAPet(DOG, FIDO);
+        petStore.stockAPet(SNAKE, SIMON);
         petStore.sendPetsToTheFarm();
         Assertions.assertTrue(petStore.getPetsInStock().isEmpty());
     }
 
     @Test
     void buyingAPetRemovesItFromThePetShop() {
-        petStore.stockAPet("Dog", "Fido");
-        petStore.sellPet("Dog").get();
+        petStore.stockAPet(DOG, FIDO);
+        petStore.sellPet(DOG);
         Assertions.assertTrue(petStore.getPetsInStock().isEmpty());
     }
 
 
     @Test
     void canExercisePets() {
-        petStore.stockAPet("Dog", "Fido");
-        petStore.stockAPet("Snake", "Simon");
+        petStore.stockAPet(DOG, FIDO);
+        petStore.stockAPet(SNAKE, SIMON);
         petStore.exercisePets();
     }
 
