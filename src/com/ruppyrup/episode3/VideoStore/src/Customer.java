@@ -3,6 +3,9 @@ package com.ruppyrup.episode3.VideoStore.src;
 import java.util.Vector;
 import java.util.Enumeration;
 
+/**
+ * The Customer is calculating all the amounts and then creating the statement i.e. doing too much
+ */
 public class Customer 
 {
 	public Customer (String name) {
@@ -26,7 +29,12 @@ public class Customer
 		while (rentals.hasMoreElements ()) {
 			double 		thisAmount = 0;
 			Rental 		each = (Rental)rentals.nextElement ();
-			
+
+			/**
+			 * The switch statement extracts data and then performs an action, violating Tell Don't Ask
+			 * The movie should know how much it costs and the rental knows how many days it was rented for
+			 */
+
 			// determines the amount for each line
 			switch (each.getMovie ().getPriceCode ()) {
 				case Movie.REGULAR:

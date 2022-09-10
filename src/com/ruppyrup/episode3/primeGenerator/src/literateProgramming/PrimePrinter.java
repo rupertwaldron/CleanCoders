@@ -14,49 +14,53 @@ public class PrimePrinter {
 
 class PrimeGenerator {
     private int[] primes;
-    private final int ordmax = 30;
-    private int candidate = 1;
+    private static final int ORDMAX = 30;
     private int primeIndex = 1;
-    private boolean possiblyPrime;
     private int ord = 2;
     private int square = 9;
     private int n = 0;
-    private int[] multiples = new int[ordmax + 1];
+    private final int[] multiples = new int[ORDMAX + 1];
 
     public int[] generate(int numberOfPrimes) {
 
+        int candidate = 1;
         primes = new int[numberOfPrimes + 1];
         primes[1] = 2;
 
         while (primeIndex < numberOfPrimes) {
             do {
                 candidate += 2;
-                if (candidate == square) {
-                    ord++;
-                    square = primes[ord] * primes[ord];
-                    multiples[ord - 1] = candidate;
-                }
-                n = 2;
-                possiblyPrime = true;
-                while (n < ord && possiblyPrime) {
-                    while (multiples[n] < candidate)
-                        multiples[n] += primes[n] + primes[n];
-                    if (multiples[n] == candidate)
-                        possiblyPrime = false;
-                    n++;
-                }
-            } while (!possiblyPrime);
+                checkCandidateIsSquare(candidate);
+            } while (!iSCandidateIsPrime(candidate));
             primeIndex++;
             primes[primeIndex] = candidate;
         }
         return primes;
     }
 
+    private boolean iSCandidateIsPrime(final int candidate) {
+        n = 2;
+        boolean possiblyPrime = true;
+        while (n < ord && possiblyPrime) {
+            while (multiples[n] < candidate)
+                multiples[n] += primes[n] + primes[n];
+            if (multiples[n] == candidate)
+                possiblyPrime = false;
+            n++;
+        }
+        return possiblyPrime;
+    }
 
+    private void checkCandidateIsSquare(int candidate) {
+        if (candidate == square) {
+            ord++;
+            square = primes[ord] * primes[ord];
+            multiples[ord - 1] = candidate;
+        }
+    }
 }
 
 class PrintNumbers {
-
     private int pagenumber = 1;
     private int pageoffset = 1;
     private final int linesPerPage;

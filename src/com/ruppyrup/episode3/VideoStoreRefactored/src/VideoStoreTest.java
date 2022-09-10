@@ -43,7 +43,8 @@ public class VideoStoreTest {
   public void testDualNewReleaseStatement() {
     statement.addRental(new Rental(newRelease1, 3));
     statement.addRental(new Rental(newRelease2, 3));
-    assertOwedAndPoints(18.0, 4);
+    statement.addRental(new Rental(newRelease2, 3));
+    assertOwedAndPoints(27.0, 6);
   }
 
   @Test

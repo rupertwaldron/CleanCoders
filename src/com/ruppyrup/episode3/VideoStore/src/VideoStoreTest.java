@@ -7,6 +7,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * These test are just testing the output, very much like UI tests which are to be avoided at all cost.
+ * The tests need to be refactored.
+ */
 public class VideoStoreTest
 {
 

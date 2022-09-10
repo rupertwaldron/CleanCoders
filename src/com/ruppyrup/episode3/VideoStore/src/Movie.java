@@ -1,5 +1,10 @@
 package com.ruppyrup.episode3.VideoStore.src;
 
+/**
+ * The Movie has several types determined by the price code with are static variables in the Movie class.
+ * This price code is then retreived in a switch statement to perform actions - violation of Tell Don't Ask
+ * The use of a switch statement and a priceCode being unique to a move should signal that polymorphism could be an option
+ */
 public class Movie
 {
 	public static final int CHILDRENS	= 2;
