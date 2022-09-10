@@ -5,16 +5,15 @@ public class PrimePrinter {
     private static int numberOfPrimes = 1000;
 
     public static void main(String[] args) {
-        var primeHelper = new PrimePrinterHelper();
-        int[] primes = primeHelper.invoke();
+        var primeHelper = new PrimeGenerator();
+        int[] primes = primeHelper.generate(numberOfPrimes);
         var primePrinter = new PrintNumbers(50, 4);
         primePrinter.printNumbers(primes, numberOfPrimes);
     }
 }
 
-class PrimePrinterHelper {
-    private final int numberOfPrimes = 1000;
-    private final int[] primes = new int[numberOfPrimes + 1];
+class PrimeGenerator {
+    private int[] primes;
     private final int ordmax = 30;
     private int candidate = 1;
     private int primeIndex = 1;
@@ -24,8 +23,9 @@ class PrimePrinterHelper {
     private int n = 0;
     private int[] multiples = new int[ordmax + 1];
 
-    public int[] invoke() {
+    public int[] generate(int numberOfPrimes) {
 
+        primes = new int[numberOfPrimes + 1];
         primes[1] = 2;
 
         while (primeIndex < numberOfPrimes) {
