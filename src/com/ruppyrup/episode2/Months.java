@@ -2,8 +2,8 @@ package com.ruppyrup.episode2;
 
 public class Months {
 
-    private static String[] DATE_FORMAT_SYMBOLS_SHORT = new String[] {"Jan", "Feb", "etc"};
-    private static String[] DATE_FORMAT_SYMBOLS = new String[] {"January", "February", "etc"};
+    private static String[] DATE_FORMAT_SYMBOLS_SHORT = new String[] {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+    private static String[] DATE_FORMAT_SYMBOLS = new String[] {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 
 
     public static String[] getMonths(final boolean shortened) {
