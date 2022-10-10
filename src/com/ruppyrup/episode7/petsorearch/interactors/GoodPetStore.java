@@ -2,6 +2,7 @@ package com.ruppyrup.episode7.petsorearch.interactors;
 
 
 import com.ruppyrup.episode7.petsorearch.boundaries.PetShopOwnerRequest;
+import com.ruppyrup.episode7.petsorearch.boundaries.OutputPort;
 import com.ruppyrup.episode7.petsorearch.entities.Dog;
 import com.ruppyrup.episode7.petsorearch.entities.Pet;
 import com.ruppyrup.episode7.petsorearch.entities.PetFactory;
@@ -18,6 +19,7 @@ import java.util.Optional;
 
 public class GoodPetStore implements PetShopOwnerRequest {
 
+  private final OutputPort port;
   private final PetFactory petFactory;
 
   private final List<Pet> petsInStock = new ArrayList<>();
@@ -25,9 +27,11 @@ public class GoodPetStore implements PetShopOwnerRequest {
   /**
    * Pet factory is injected for ease of testing and can operate with multiple petFactories
    *
+   * @param port
    * @param petFactory
    */
-  public GoodPetStore(final PetFactory petFactory) {
+  public GoodPetStore(final OutputPort port, final PetFactory petFactory) {
+    this.port = port;
     this.petFactory = petFactory;
   }
 
@@ -41,6 +45,10 @@ public class GoodPetStore implements PetShopOwnerRequest {
   // use-case owners lists the pets in stock
   @Override
   public List<Pet> getPetsInStock() {
+    petsInStock.stream()
+        .map(Object::toString)
+        .forEach(port::writeToOuput);
+
     return List.copyOf(petsInStock);
   }
 
@@ -86,11 +94,20 @@ class TestGoodPetStore {
   private static final String SIMON = "Simon";
   private PetShopOwnerRequest petStore;
   private PetFactory petFactory;
+  private OutputPort port;
 
   @BeforeEach
   void setup() {
+    port = new OutputPort() {
+      String input;
+      @Override
+      public void writeToOuput(final String output) {
+        this.input = output;
+      }
+    };
+
     petFactory = new PetFactory();
-    petStore = new GoodPetStore(petFactory);
+    petStore = new GoodPetStore(port, petFactory);
   }
 
   @AfterEach
