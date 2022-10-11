@@ -1,4 +1,4 @@
-package com.ruppyrup.episode7.petsorearch.entities;
+package com.ruppyrup.episode7.petstorearch.entities;
 
 public class Dog extends Pet {
 
@@ -26,4 +26,8 @@ public class Dog extends Pet {
     LOGGER.info("Dog called " + getPetName() + " is taken for a walk");
   }
 
+  @Override
+  public String toString() {
+    return "Dog" + super.toString();
+  }
 }

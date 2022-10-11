@@ -1,12 +1,12 @@
-package com.ruppyrup.episode7.petsorearch.interactors;
+package com.ruppyrup.episode7.petstorearch.interactors;
 
 
-import com.ruppyrup.episode7.petsorearch.boundaries.PetShopOwnerRequest;
-import com.ruppyrup.episode7.petsorearch.boundaries.OutputPort;
-import com.ruppyrup.episode7.petsorearch.entities.Dog;
-import com.ruppyrup.episode7.petsorearch.entities.Pet;
-import com.ruppyrup.episode7.petsorearch.entities.PetFactory;
-import com.ruppyrup.episode7.petsorearch.entities.Snake;
+import com.ruppyrup.episode7.petstorearch.boundaries.PetShopOwnerRequest;
+import com.ruppyrup.episode7.petstorearch.boundaries.OutputPort;
+import com.ruppyrup.episode7.petstorearch.entities.Dog;
+import com.ruppyrup.episode7.petstorearch.entities.Pet;
+import com.ruppyrup.episode7.petstorearch.entities.PetFactory;
+import com.ruppyrup.episode7.petstorearch.entities.Snake;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class GoodPetStore implements PetShopOwnerRequest {
+public class PetStoreInteractor implements PetShopOwnerRequest {
 
   private final OutputPort port;
   private final PetFactory petFactory;
@@ -30,7 +30,7 @@ public class GoodPetStore implements PetShopOwnerRequest {
    * @param port
    * @param petFactory
    */
-  public GoodPetStore(final OutputPort port, final PetFactory petFactory) {
+  public PetStoreInteractor(final OutputPort port, final PetFactory petFactory) {
     this.port = port;
     this.petFactory = petFactory;
   }
@@ -40,14 +40,19 @@ public class GoodPetStore implements PetShopOwnerRequest {
   public void stockAPet(String petType, String petName) {
     Pet newPet = petFactory.orderPet(petType, petName);
     petsInStock.add(newPet);
+    port.writeToOuput("New pet added to stock : " + newPet);
   }
 
   // use-case owners lists the pets in stock
   @Override
   public List<Pet> getPetsInStock() {
+    StringBuilder sb = new StringBuilder();
+
     petsInStock.stream()
         .map(Object::toString)
-        .forEach(port::writeToOuput);
+        .forEach(sentence -> sb.append(sentence).append("\n"));
+
+    port.writeToOuput(sb.toString());
 
     return List.copyOf(petsInStock);
   }
@@ -59,7 +64,7 @@ public class GoodPetStore implements PetShopOwnerRequest {
                                     .filter(pet -> pet.isPetType(petType))
                                     .findFirst();
 
-    optionalPet.ifPresent(petsInStock::remove);
+    optionalPet.ifPresentOrElse(petsInStock::remove, () -> port.writeToOuput("You don't have any " + petType + " to sell."));
 
     return optionalPet;
   }
@@ -67,6 +72,7 @@ public class GoodPetStore implements PetShopOwnerRequest {
   // use-case get rid of pets
   @Override
   public void sendPetsToTheFarm() {
+    port.writeToOuput("All pets sent to the \"Farm\"");
     petsInStock.clear();
   }
 
@@ -98,16 +104,9 @@ class TestGoodPetStore {
 
   @BeforeEach
   void setup() {
-    port = new OutputPort() {
-      String input;
-      @Override
-      public void writeToOuput(final String output) {
-        this.input = output;
-      }
-    };
-
+    port = new MockOutputPort();
     petFactory = new PetFactory();
-    petStore = new GoodPetStore(port, petFactory);
+    petStore = new PetStoreInteractor(port, petFactory);
   }
 
   @AfterEach
@@ -179,4 +178,13 @@ class TestGoodPetStore {
     petStore.getPetsInStock().forEach(pet -> Assertions.assertTrue(pet.doesPetNeedExercisingToday()));
   }
 
+  static class MockOutputPort implements OutputPort {
+    String inputArg;
+    @Override
+    public void writeToOuput(final String output) {
+      inputArg = output;
+    }
+  }
+
 }
+

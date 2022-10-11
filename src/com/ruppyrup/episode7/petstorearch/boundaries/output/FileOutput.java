@@ -1,9 +1,5 @@
-package com.ruppyrup.episode7.petsorearch.boundaries.output;
+package com.ruppyrup.episode7.petstorearch.boundaries.output;
 
-
-
-import java.io.FileWriter;
-import java.io.IOException;
 
 /**
  *  Implements Output interface which is polymorhic so control is passed back up the hierarchy

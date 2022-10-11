@@ -1,4 +1,4 @@
-package com.ruppyrup.episode7.petsorearch.entities;
+package com.ruppyrup.episode7.petstorearch.entities;
 
 import java.time.LocalDate;
 import java.util.logging.Logger;
@@ -53,5 +53,10 @@ public abstract class Pet {
 
     public void setExerciseDay(final LocalDate exerciseDay) {
         this.exerciseDay = exerciseDay;
+    }
+
+    @Override
+    public String toString() {
+        return " with name " + name;
     }
 }

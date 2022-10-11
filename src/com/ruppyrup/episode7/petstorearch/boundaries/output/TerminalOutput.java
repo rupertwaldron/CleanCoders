@@ -1,7 +1,7 @@
-package com.ruppyrup.episode7.petsorearch.boundaries.output;
+package com.ruppyrup.episode7.petstorearch.boundaries.output;
 
 
-import com.ruppyrup.episode7.petsorearch.boundaries.OutputPort;
+import com.ruppyrup.episode7.petstorearch.boundaries.OutputPort;
 
 /**
  *  Implements Output interface which is polymorhic so control is passed back up the hierarchy

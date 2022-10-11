@@ -1,6 +1,6 @@
-package com.ruppyrup.episode7.petsorearch.boundaries;
+package com.ruppyrup.episode7.petstorearch.boundaries;
 
-import com.ruppyrup.episode7.petsorearch.entities.Pet;
+import com.ruppyrup.episode7.petstorearch.entities.Pet;
 
 import java.util.List;
 import java.util.Optional;

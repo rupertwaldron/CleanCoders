@@ -1,4 +1,4 @@
-package com.ruppyrup.episode7.petsorearch.entities;
+package com.ruppyrup.episode7.petstorearch.entities;
 
 
 

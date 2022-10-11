@@ -1,16 +1,14 @@
-package com.ruppyrup.episode7.petsorearch.boundaries.input;
+package com.ruppyrup.episode7.petstorearch.boundaries.input;
 
 
-import com.ruppyrup.episode7.petsorearch.boundaries.PetShopOwnerRequest;
-import com.ruppyrup.episode7.petsorearch.entities.Pet;
+import com.ruppyrup.episode7.petstorearch.boundaries.PetShopOwnerRequest;
+import com.ruppyrup.episode7.petstorearch.entities.Pet;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -19,11 +17,11 @@ import java.util.Scanner;
 /**
  *  Uses interfaces closer to the core so control in correct
  */
-public class KeyboardInput {
+public class PetShopInput {
   private final PetShopOwnerRequest petShopRequest;
   private final Scanner scanner;
 
-  public KeyboardInput(final PetShopOwnerRequest petShopRequest, final Scanner scanner) {
+  public PetShopInput(final PetShopOwnerRequest petShopRequest, final Scanner scanner) {
     this.petShopRequest = petShopRequest;
     this.scanner = scanner;
   }
@@ -40,39 +38,39 @@ public class KeyboardInput {
   }
 }
 
-class TestKeyboardInput {
+class TestPetShopInput {
 
-  private KeyboardInput keyboardInput;
+  private PetShopInput petShopInput;
   private MockPetShopRequest mockPetShopRequest;
   private Scanner mockScanner;
 
   @BeforeEach
   void setup() throws FileNotFoundException {
     mockPetShopRequest = new MockPetShopRequest();
-    File inputText = new File("src/com/ruppyrup/episode7/petsorearch/boundaries/input/test.txt");
+    File inputText = new File("src/com/ruppyrup/episode7/petstorearch/boundaries/input/test.txt");
     mockScanner = new Scanner(inputText);
-    keyboardInput = new KeyboardInput(mockPetShopRequest, mockScanner);
+    petShopInput = new PetShopInput(mockPetShopRequest, mockScanner);
   }
 
   @Test
   void canStockAPet() {
-    keyboardInput.fetchFromKeyboard();
+    petShopInput.fetchFromKeyboard();
     Assertions.assertEquals("Dog", mockPetShopRequest.petType);
     Assertions.assertEquals("Jake", mockPetShopRequest.petName);
   }
 
   @Test
   void getPetsInStock() {
-    keyboardInput.fetchFromKeyboard();
-    keyboardInput.fetchFromKeyboard();
+    petShopInput.fetchFromKeyboard();
+    petShopInput.fetchFromKeyboard();
     Assertions.assertEquals(1, mockPetShopRequest.listPetsCounter);
   }
 
   @Test
   void sendPetsToTheFarm() {
-    keyboardInput.fetchFromKeyboard();
-    keyboardInput.fetchFromKeyboard();
-    keyboardInput.fetchFromKeyboard();
+    petShopInput.fetchFromKeyboard();
+    petShopInput.fetchFromKeyboard();
+    petShopInput.fetchFromKeyboard();
     Assertions.assertEquals(1, mockPetShopRequest.petsToFarmCounter);
   }
 }
