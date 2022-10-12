@@ -20,13 +20,6 @@ public abstract class Pet {
      */
     private final String name;
 
-    /**
-     * exerciseDay could be private to increase the encapulsation because I don't want the
-     * public api to access it directly. It is packgage private to aid with testing - so can be changed for certain tests
-     * The subclasses don't need to access it directly
-     */
-    private LocalDate exerciseDay = LocalDate.now().minusDays(2);
-
     protected Pet(final String name) {
         this.name = name;
     }
@@ -36,24 +29,6 @@ public abstract class Pet {
     }
 
     public abstract boolean isPetType(String petType);
-
-    public void exercise() {
-        exerciseDay = LocalDate.now();
-    }
-
-    /**
-     * This is an example of "Tell Don't Ask" because I "tell" the class to do something
-     * Alternatively I would have extracted the date via a getter and performed the business logic
-     * in the other class which breaks encapsulation
-     * @return boolean if pet has gone a day without exercising
-     */
-    public boolean doesPetNeedExercisingToday() {
-        return LocalDate.now().minusDays(1L).isAfter(exerciseDay);
-    }
-
-    public void setExerciseDay(final LocalDate exerciseDay) {
-        this.exerciseDay = exerciseDay;
-    }
 
     @Override
     public String toString() {

@@ -16,16 +16,6 @@ public class Dog extends Pet {
     return "Dog".equals(petType);
   }
 
-  /**
-   * Basic use of strategy design pattern, the exercise() method will be different for each pet
-   * The commonality is covered by calling the superclass method
-   */
-  @Override
-  public void exercise() {
-    super.exercise();
-    LOGGER.info("Dog called " + getPetName() + " is taken for a walk");
-  }
-
   @Override
   public String toString() {
     return "Dog" + super.toString();

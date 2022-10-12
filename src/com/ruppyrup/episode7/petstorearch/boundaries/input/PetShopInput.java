@@ -27,14 +27,16 @@ public class PetShopInput {
   }
 //  private final Scanner scanner = new Scanner(System.in);
 
-  public void fetchFromKeyboard() {
+  public String fetchFromKeyboard() {
     String input = scanner.nextLine();
     String[] split = input.split(",");
     switch (split[0]) {
-      case "stockAPet" : petShopRequest.stockAPet(split[1], split[2]); break;
-      case "getPetsInStock" : petShopRequest.getPetsInStock(); break;
-      default : petShopRequest.sendPetsToTheFarm();
+      case "stockAPet" -> petShopRequest.stockAPet(split[1], split[2]);
+      case "getPetsInStock" -> petShopRequest.getPetsInStock();
+      case "sellPet" -> petShopRequest.sellPet(split[1]);
+      default -> petShopRequest.sendPetsToTheFarm();
     }
+    return input;
   }
 }
 
@@ -89,23 +91,16 @@ class MockPetShopRequest implements PetShopOwnerRequest {
   }
 
   @Override
-  public List<Pet> getPetsInStock() {
+  public void getPetsInStock() {
     listPetsCounter++;
-    return null;
   }
 
   @Override
-  public Optional<Pet> sellPet(final String petType) {
-    return Optional.empty();
+  public void sellPet(final String petType) {
   }
 
   @Override
   public void sendPetsToTheFarm() {
     petsToFarmCounter++;
-  }
-
-  @Override
-  public void exercisePets() {
-
   }
 }

@@ -12,12 +12,6 @@ public class Snake extends Pet {
   }
 
   @Override
-  public void exercise() {
-    super.exercise();
-    LOGGER.info("Snake called " + getPetName() + " is let out in the shop");
-  }
-
-  @Override
   public String toString() {
     return "Snake" + super.toString();
   }

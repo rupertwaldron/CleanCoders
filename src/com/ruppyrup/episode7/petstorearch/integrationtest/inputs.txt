@@ -1,4 +1,6 @@
 stockAPet,Dog,Jake
 stockAPet,Snake,Simon
 getPetsInStock
+sellPet,Dog
+getPetsInStock
 fed up with petshop

@@ -10,14 +10,11 @@ public interface PetShopOwnerRequest {
   void stockAPet(String petType, String petName);
 
   // use-case owners lists the pets in stock
-  List<Pet> getPetsInStock();
+  void getPetsInStock();
 
   // use-case owner sells pet if pet is available
-  Optional<Pet> sellPet(String petType);
+  void sellPet(String petType);
 
   // use-case get rid of pets
   void sendPetsToTheFarm();
-
-  // use-case exercise pets
-  void exercisePets();
 }

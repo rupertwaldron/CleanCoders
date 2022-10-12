@@ -50,11 +50,35 @@ public class PetStoreIT {
   }
 
   @Test
+  void canSellAPet() {
+    petShopInput.fetchFromKeyboard();
+    petShopInput.fetchFromKeyboard();
+    petShopInput.fetchFromKeyboard();
+    petShopInput.fetchFromKeyboard();
+
+    Assertions.assertEquals("You have sold Dog with name Jake", port.getInputArg());
+  }
+
+  @Test
+  void canListCorrectPetsAfterSellingAPet() {
+    petShopInput.fetchFromKeyboard();
+    petShopInput.fetchFromKeyboard();
+    petShopInput.fetchFromKeyboard();
+    petShopInput.fetchFromKeyboard();
+    petShopInput.fetchFromKeyboard();
+
+    Assertions.assertEquals("Snake with name Simon\n", port.getInputArg());
+  }
+
+  @Test
   void canSendPetsToFarm() {
     petShopInput.fetchFromKeyboard();
     petShopInput.fetchFromKeyboard();
     petShopInput.fetchFromKeyboard();
     petShopInput.fetchFromKeyboard();
+    petShopInput.fetchFromKeyboard();
+    petShopInput.fetchFromKeyboard();
+
     Assertions.assertEquals("All pets sent to the \"Farm\"", port.getInputArg());
   }
 
