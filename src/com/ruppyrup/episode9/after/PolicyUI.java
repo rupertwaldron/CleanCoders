@@ -1,22 +1,20 @@
 package com.ruppyrup.episode9.after;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class PolicyUI {
 
-  private Employee employee;
+  private PayPolicy payPolicy;
 
-  public PolicyUI(final Employee employee) {
-    this.employee = employee;
+
+  public PolicyUI(final PayPolicy payPolicy) {
+    this.payPolicy = payPolicy;
   }
 
-  public Employee getEmployee() {
-    return employee;
-  }
-
-  public void setEmployee(final Employee employee) {
-    this.employee = employee;
+  public PayPolicy getPayPolicy() {
+    return payPolicy;
   }
 
   /**
@@ -24,15 +22,15 @@ public class PolicyUI {
    * Sets the Pay policy
    */
   public void setPayPolicy(final PayPolicy payPolicy) {
-    employee.setPayPolicy(payPolicy);
+    this.payPolicy = payPolicy;
   }
 
   /**
    * Owner -  Policy
    * @return pay based on the current policy
    */
-  public double calculatePay() {
-    return employee.calculatePay();
+  public String calculatePay(Employee employee) {
+    return payPolicy.calculatePay(employee);
   }
 }
 
@@ -40,8 +38,8 @@ class PolicyTest {
   @Test
   void policyCalculatePay() {
     Employee employee = new Employee( "Bob", 30000.0);
-    PolicyUI policy = new PolicyUI(employee);
-
-    Assertions.assertEquals(2500.00, policy.calculatePay());
+    PayPolicy weeklyPolicy = new WeeklyPayPolicy();
+    PolicyUI policy = new PolicyUI(weeklyPolicy);
+    assertThat(policy.calculatePay(employee)).isEqualTo("576.92");
   }
 }
