@@ -22,6 +22,7 @@ public class OperationsUI {
 
   /**
    * Owner is Operations
+   *
    * @return description of the employee details
    */
   public String describeEmployee(Employee employee) {
@@ -30,6 +31,7 @@ public class OperationsUI {
 
   /**
    * Owner is Operations
+   *
    * @return description of the employee details
    */
   public void updateSalary(final double salary, Employee employee) {
@@ -45,10 +47,15 @@ class OperationsUITest {
    */
   @Test
   void operationsGetEmployeeDescription() {
-    Employee employee = new Employee( "Bob", 20000.0);
-    EmployeePrinter printer = new DefaultEmployeePrinter();
+    Employee employee = new Employee("Bob", 20000.0);
+    EmployeePrinter printer = new PrettyEmployeePrinter();
     OperationsUI operationsUI = new OperationsUI(printer);
-    assertThat(operationsUI.describeEmployee(employee)).isEqualTo("Employee : " + employee.getId() + ", name : Bob, salary : £20000.0");
+    String exptected = """
+        Employee ID : 1
+        Name : Bob
+        Pay : £1,666.67
+        """;
+    assertThat(operationsUI.describeEmployee(employee)).isEqualTo(exptected);
   }
 
 
@@ -57,10 +64,10 @@ class OperationsUITest {
    */
   @Test
   void operationsUpdateSalary() {
-    Employee employee = new Employee( "Bob", 20000.0);
+    Employee employee = new Employee("Bob", 20000.0);
     EmployeePrinter printer = new DefaultEmployeePrinter();
     OperationsUI operationsUI = new OperationsUI(printer);
     operationsUI.updateSalary(30000.0, employee);
-    assertThat(operationsUI.describeEmployee(employee)).isEqualTo("Employee : " + employee.getId() + ", name : Bob, salary : £30000.0");
+    assertThat(operationsUI.describeEmployee(employee)).isEqualTo("Employee : " + employee.getId() + ", name : Bob, pay : £2500.00");
   }
 }
