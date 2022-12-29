@@ -1,9 +1,9 @@
 package com.ruppyrup.episode13.spring.loosecoupling.service;
 
-public class ApuravChauhanMessageProvider implements IMessageProvider {
+public class AnotherMessageProvider implements IMessageProvider {
 
     @Override
     public String getMessage() {
-        return "Apurav Chauhan";
+        return "Another message";
     }
 }

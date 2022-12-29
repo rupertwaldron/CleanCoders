@@ -1,7 +1,7 @@
 package com.ruppyrup.episode13.spring.loosecoupling;
 
 
-import com.ruppyrup.solid.DIP.spring.loosecoupling.service.IMessageRenderer;
+import com.ruppyrup.episode13.spring.loosecoupling.service.IMessageRenderer;
 
 /**
  * 
@@ -10,7 +10,7 @@ import com.ruppyrup.solid.DIP.spring.loosecoupling.service.IMessageRenderer;
  */
 public class Main {
     public static void main(String[] args) throws Exception {
-        IMessageRenderer renderer = (IMessageRenderer) ApuravFramework.beanRegistry.get("renderer");
+        IMessageRenderer renderer = (IMessageRenderer) DIFramework.beanRegistry.get("renderer");
         renderer.render();
     }
 }

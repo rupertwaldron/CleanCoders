@@ -1,11 +1,11 @@
 package com.ruppyrup.episode13.spring.annotations.service;
 
-import com.ruppyrup.solid.DIP.spring.rrframework.rrannotations.RRAutoWire;
-import com.ruppyrup.solid.DIP.spring.rrframework.rrannotations.RRComponent;
+import com.ruppyrup.episode13.spring.rrframework.rrannotations.RRAutoWire;
+import com.ruppyrup.episode13.spring.rrframework.rrannotations.RRComponent;
 
 @RRComponent
 public class StandardOutMessageRenderer implements IMessageRenderer {
-    @RRAutoWire(profile = "AP")
+    @RRAutoWire(profile = "hello")
     private IMessageProvider messageProvider;
 
     @Override

@@ -9,13 +9,13 @@ import java.util.Properties;
  * @author apuravchauhan
  *
  */
-public class ApuravFramework {
+public class DIFramework {
     public static HashMap<String, Object> beanRegistry;
     static {
         Properties properties = new Properties();
         try {
             properties.load(Main.class.getResourceAsStream("dependencies.properties"));
-            beanRegistry = new HashMap<String, Object>();
+            beanRegistry = new HashMap<>();
             for (Object key : properties.keySet()) {
                 String keyName = key.toString();
                 String val = properties.getProperty(keyName);

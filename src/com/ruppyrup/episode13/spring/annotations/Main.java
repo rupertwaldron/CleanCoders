@@ -1,14 +1,10 @@
 package com.ruppyrup.episode13.spring.annotations;
 
 
-import com.ruppyrup.solid.DIP.spring.annotations.service.IMessageRenderer;
-import com.ruppyrup.solid.DIP.spring.rrframework.application.RRDIApplication;
+import com.ruppyrup.episode13.spring.annotations.service.IMessageRenderer;
+import com.ruppyrup.episode13.spring.rrframework.application.RRDIApplication;
 
-/**
- * 
- * @author apuravchauhan
- *
- */
+
 public class Main extends RRDIApplication {
 
 

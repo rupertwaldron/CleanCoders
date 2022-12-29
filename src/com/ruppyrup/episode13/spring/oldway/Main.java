@@ -1,10 +1,10 @@
 package com.ruppyrup.episode13.spring.oldway;
 
 
-import com.ruppyrup.solid.DIP.spring.oldway.service.HelloWorldMessageProvider;
-import com.ruppyrup.solid.DIP.spring.oldway.service.IMessageProvider;
-import com.ruppyrup.solid.DIP.spring.oldway.service.IMessageRenderer;
-import com.ruppyrup.solid.DIP.spring.oldway.service.StandardOutMessageRenderer;
+import com.ruppyrup.episode13.spring.oldway.service.HelloWorldMessageProvider;
+import com.ruppyrup.episode13.spring.oldway.service.IMessageProvider;
+import com.ruppyrup.episode13.spring.oldway.service.IMessageRenderer;
+import com.ruppyrup.episode13.spring.oldway.service.StandardOutMessageRenderer;
 
 /**
  * 

@@ -1,8 +1,9 @@
 package com.ruppyrup.episode13.spring.rrframework.application;
 
 
-import com.ruppyrup.solid.DIP.spring.rrframework.rrannotations.RRAutoWire;
-import com.ruppyrup.solid.DIP.spring.rrframework.rrannotations.RRComponent;
+
+import com.ruppyrup.episode13.spring.rrframework.rrannotations.RRAutoWire;
+import com.ruppyrup.episode13.spring.rrframework.rrannotations.RRComponent;
 
 import java.io.BufferedReader;
 import java.io.IOException;
