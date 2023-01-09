@@ -3,7 +3,7 @@ package com.ruppyrup.episode12.lightswitchgood;
 public class MyDimmingSwitch {
   private Dimmable dimmable;
 
-  public MyDimmingSwitch(final Dimmable switchable) {
+  public MyDimmingSwitch(final Dimmable dimmable) {
     this.dimmable = dimmable;
   }
 
