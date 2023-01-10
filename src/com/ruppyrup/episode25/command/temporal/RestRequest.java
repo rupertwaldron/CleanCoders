@@ -1,11 +1,13 @@
 package com.ruppyrup.episode25.command.temporal;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -32,11 +34,13 @@ class TestReqCommands {
     }
 }
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TestCommands {
 
     private final RestRepository repo = new RestRepository();
     private final CommandRepository commandRepo = new CommandRepository();
     private final ExecutorService fixedThreadPool = Executors.newCachedThreadPool(); // fixed pool of threads
+    private final ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
 
     private final Map<String, Boolean> data = Map.of(
             "Visa", false,
@@ -44,36 +48,53 @@ class TestCommands {
             "Mastercard", true
     );
 
+    private final List<String> dataKeys = new ArrayList<>(data.keySet());
+    private final Random random = new Random();
+    int noOfCommmands = 10;
+
+    @AfterAll
+    void shutDown() {
+        fixedThreadPool.shutdown();
+        ses.shutdown();
+    }
+
     @Test
     void canExecuteCommandsReceivedFromMultipleThreads() throws InterruptedException {
-        for (var val : data.entrySet()) {
+        final AtomicInteger counter = new AtomicInteger(0);
+
+        ses.scheduleAtFixedRate(() -> {
+            try {
+                commandRepo.executeCommands();
+                counter.incrementAndGet();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }, 10, 100, TimeUnit.MILLISECONDS);
+
+
+        for (int i = 0; i < noOfCommmands; i++) {
             Arrays.stream(Shopper.values())
                     .forEach(shopper -> fixedThreadPool.execute(() -> {
                         try {
-                            processRequest(shopper, val.getKey(), val.getValue());
+                            int index =  random.nextInt(dataKeys.size());
+                            String card = dataKeys.get(index);
+                            processRequest(shopper, card, data.get(card));
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
                     }));
         }
 
+        int expectedCommands = noOfCommmands * 9;
 
-        while (commandRepo.noOfUnexecutedCommands() < 13) {
+        while (counter.get() < 10) {
             Thread.sleep(100);
         }
 
-        commandRepo.executeCommands();
-
-        Thread.sleep(1000);
-
-        commandRepo.executeCommands();
-
         assertThat(commandRepo.noOfUnexecutedCommands()).isEqualTo(0);
-        assertThat(repo.noOfRequestsSaved()).isEqualTo(6);
-        assertThat(commandRepo.noOfUndoCommands()).isEqualTo(27);
-
-
-        fixedThreadPool.shutdown();
+        assertThat(commandRepo.noOfUndoCommands()).isEqualTo(expectedCommands);
+        assertThat(commandRepo.numberOfCommandsProcessed()).isEqualTo(expectedCommands);
+        assertThat(commandRepo.numberOfCommandsSaved()).isEqualTo(expectedCommands);
     }
 
     private void processRequest(Shopper shopper, String card, boolean saveCard) throws InterruptedException {
@@ -212,27 +233,26 @@ class ProcessResponse implements ReqCommand {
 class CommandRepository {
     private final Lock lock = new ReentrantLock();
     final Condition executionInProgress = lock.newCondition();
-    private Deque<ReqCommand> commands = new LinkedList<>();
+    private Deque<ReqCommand> commands = new ConcurrentLinkedDeque<>();
 
-    private Deque<ReqCommand> undos = new LinkedList<>();
+    private Deque<ReqCommand> undos = new ConcurrentLinkedDeque<>();
+    private final AtomicInteger executeCounter = new AtomicInteger(0);
+    private final AtomicInteger saveCounter = new AtomicInteger(0);
 
-
-    private final AtomicBoolean savePermitted = new AtomicBoolean(true);
-
-    public synchronized void saveCommmand(ReqCommand command) {
-        if (savePermitted.get())
+    public void saveCommmand(ReqCommand command) {
             commands.addLast(command);
+            saveCounter.incrementAndGet();
     }
 
-    public synchronized void executeCommands() throws InterruptedException {
-        savePermitted.set(false);
+    public void executeCommands() throws InterruptedException {
+        System.out.println("Starting command execution");
         while (!commands.isEmpty()) {
             ReqCommand toUndo = commands.pop();
+//            Thread.sleep(100);
             toUndo.execute();
             undos.addFirst(toUndo);
+            executeCounter.incrementAndGet();
         }
-
-        savePermitted.set(true);
     }
 
     public int noOfUnexecutedCommands() {
@@ -241,6 +261,14 @@ class CommandRepository {
 
     public int noOfUndoCommands() {
         return undos.size();
+    }
+
+    public int numberOfCommandsProcessed() {
+        return executeCounter.get();
+    }
+
+    public int numberOfCommandsSaved() {
+        return saveCounter.get();
     }
 }
 
