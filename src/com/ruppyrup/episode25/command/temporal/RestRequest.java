@@ -8,9 +8,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -69,7 +67,7 @@ class TestCommands {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-        }, 10, 100, TimeUnit.MILLISECONDS);
+        }, 10, 1, TimeUnit.MILLISECONDS);
 
 
         for (int i = 0; i < noOfCommmands; i++) {
@@ -79,6 +77,7 @@ class TestCommands {
                             int index =  random.nextInt(dataKeys.size());
                             String card = dataKeys.get(index);
                             processRequest(shopper, card, data.get(card));
+                            Thread.sleep(10);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
@@ -87,7 +86,7 @@ class TestCommands {
 
         int expectedCommands = noOfCommmands * 9;
 
-        while (counter.get() < 10) {
+        while (counter.get() < 100) {
             Thread.sleep(100);
         }
 
@@ -95,6 +94,51 @@ class TestCommands {
         assertThat(commandRepo.noOfUndoCommands()).isEqualTo(expectedCommands);
         assertThat(commandRepo.numberOfCommandsProcessed()).isEqualTo(expectedCommands);
         assertThat(commandRepo.numberOfCommandsSaved()).isEqualTo(expectedCommands);
+    }
+
+    @Test
+    void canIUndoCommandsReceivedFromMultipleThreads() throws InterruptedException {
+        final AtomicInteger counter = new AtomicInteger(0);
+
+        ses.scheduleAtFixedRate(() -> {
+            try {
+                commandRepo.executeCommands();
+                counter.incrementAndGet();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }, 10, 1, TimeUnit.MILLISECONDS);
+
+
+        for (int i = 0; i < noOfCommmands; i++) {
+            Arrays.stream(Shopper.values())
+                    .forEach(shopper -> fixedThreadPool.execute(() -> {
+                        try {
+                            int index =  random.nextInt(dataKeys.size());
+                            String card = dataKeys.get(index);
+                            processRequest(shopper, card, data.get(card));
+                            Thread.sleep(10);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }));
+        }
+
+        int expectedCommands = noOfCommmands * 9;
+
+        while (counter.get() < 100) {
+            Thread.sleep(100);
+        }
+
+        assertThat(commandRepo.noOfUnexecutedCommands()).isEqualTo(0);
+        assertThat(commandRepo.noOfUndoCommands()).isEqualTo(expectedCommands);
+        assertThat(commandRepo.numberOfCommandsProcessed()).isEqualTo(expectedCommands);
+        assertThat(commandRepo.numberOfCommandsSaved()).isEqualTo(expectedCommands);
+
+        commandRepo.undoCommands();
+
+        assertThat(commandRepo.noOfUnexecutedCommands()).isEqualTo(0);
+        assertThat(commandRepo.noOfUndoCommands()).isEqualTo(0);
     }
 
     private void processRequest(Shopper shopper, String card, boolean saveCard) throws InterruptedException {
@@ -167,6 +211,7 @@ public class RestRequest {
 
 interface ReqCommand {
     void execute();
+    void undo();
 }
 
 
@@ -186,6 +231,14 @@ class SavePayment implements ReqCommand {
             System.out.println("Card is saved");
         }
 
+    }
+
+    @Override
+    public void undo() {
+        if (request.isSaveCard()) {
+            repo.remove(request);
+            System.out.println("Card is un-saved");
+        }
     }
 }
 
@@ -214,6 +267,11 @@ class ProcessRequest implements ReqCommand {
         }
 
     }
+
+    @Override
+    public void undo() {
+        response.setDependentResponse(null);
+    }
 }
 
 class ProcessResponse implements ReqCommand {
@@ -227,32 +285,61 @@ class ProcessResponse implements ReqCommand {
     public void execute() {
         System.out.println("Process response :: " + response.getDependentResponse());
     }
+
+    @Override
+    public void undo() {
+        System.out.println("UnProcess response :: " + response.getDependentResponse());
+    }
 }
 
 
 class CommandRepository {
-    private final Lock lock = new ReentrantLock();
-    final Condition executionInProgress = lock.newCondition();
-    private Deque<ReqCommand> commands = new ConcurrentLinkedDeque<>();
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
+    private final Lock writeLock = lock.writeLock();
+    private final Lock readLock = lock.readLock();
 
-    private Deque<ReqCommand> undos = new ConcurrentLinkedDeque<>();
+    private final ReadWriteLock undolock = new ReentrantReadWriteLock();
+    private final Lock undoWriteLock = undolock.writeLock();
+    private final Lock undoReadLock = undolock.readLock();
+    private Deque<ReqCommand> commands = new LinkedList<>();
+
+    private Deque<ReqCommand> undos = new LinkedList<>();
     private final AtomicInteger executeCounter = new AtomicInteger(0);
     private final AtomicInteger saveCounter = new AtomicInteger(0);
 
     public void saveCommmand(ReqCommand command) {
+        try {
+            writeLock.lock();
             commands.addLast(command);
             saveCounter.incrementAndGet();
+        } finally {
+            writeLock.unlock();
+        }
+
     }
 
     public void executeCommands() throws InterruptedException {
         System.out.println("Starting command execution");
-        while (!commands.isEmpty()) {
-            ReqCommand toUndo = commands.pop();
+
+        try {
+            readLock.lock();
+            while (!commands.isEmpty()) {
+                ReqCommand command = commands.pop();
 //            Thread.sleep(100);
-            toUndo.execute();
-            undos.addFirst(toUndo);
-            executeCounter.incrementAndGet();
+                command.execute();
+                executeCounter.incrementAndGet();
+                try {
+                    undoWriteLock.lock();
+                    undos.addFirst(command);
+                } finally {
+                    undoWriteLock.unlock();
+                }
+            }
+        } finally {
+            readLock.unlock();
         }
+
+
     }
 
     public int noOfUnexecutedCommands() {
@@ -270,6 +357,20 @@ class CommandRepository {
     public int numberOfCommandsSaved() {
         return saveCounter.get();
     }
+
+    public void undoCommands() {
+        System.out.println("Starting command undo");
+        undoReadLock.lock();
+        try {
+            while (!undos.isEmpty()) {
+                ReqCommand toUndo = undos.pop();
+//            Thread.sleep(100);
+                toUndo.undo();
+            }
+        } finally {
+            undoReadLock.unlock();
+        }
+    }
 }
 
 class RestRepository {
@@ -278,6 +379,11 @@ class RestRepository {
     public void save(RestRequest request) {
         requests.add(request);
         System.out.println("Saved :: " + request);
+    }
+
+    public void remove(RestRequest request) {
+        requests.remove(request);
+        System.out.println("Undone save :: " + request);
     }
 
     public int noOfRequestsSaved() {
