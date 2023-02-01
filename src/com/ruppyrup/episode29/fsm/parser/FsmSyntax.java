@@ -108,8 +108,13 @@ public class FsmSyntax {
 
   private String formatTransitions() {
     String transitions = "";
-    for (Transition transition : logic)
+    int count = 0;
+    for (Transition transition : logic) {
       transitions += formatTransition(transition);
+      if (count++ < logic.size() - 1) {
+        transitions += "\n";
+      }
+    }
     return transitions;
   }
 
@@ -128,12 +133,17 @@ public class FsmSyntax {
     if (transition.subTransitions.size() == 1)
       return formatSubTransition(transition.subTransitions.get(0));
     else {
-      String formattedSubTransitions = "{\n";
+      String formattedSubTransitions = "";
 
-      for (SubTransition subtransition : transition.subTransitions)
-        formattedSubTransitions += "    " + formatSubTransition(subtransition) + "\n";
+      int count = 0;
+      for (SubTransition subtransition : transition.subTransitions) {
+        formattedSubTransitions += " " + formatSubTransition(subtransition);
+        if (count++ < transition.subTransitions.size() - 1) {
+          formattedSubTransitions += "\n";
+        }
+      }
 
-      return formattedSubTransitions + "  }";
+      return formattedSubTransitions;
     }
   }
 
