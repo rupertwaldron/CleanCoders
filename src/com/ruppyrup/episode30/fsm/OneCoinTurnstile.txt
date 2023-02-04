@@ -1,0 +1,13 @@
+Actions : Turnstile
+FSM : OneCoinTurnstile
+Initial : Locked
+{
+Locked {
+    Coin	Unlocked {alarmOff unlock}
+    Pass	Locked	 alarmOn
+}
+Unlocked  {
+    Coin	Unlocked thankyou
+    Pass	Locked	 lock
+}
+}
