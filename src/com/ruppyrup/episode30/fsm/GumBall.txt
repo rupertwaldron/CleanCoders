@@ -1,0 +1,21 @@
+
+FSM : GumBall
+Initial : Full
+{
+Full {
+    Coin Dispense alarmOff
+    TurnLeaver Full alarm
+}
+Dispense {
+    Coin Dispense returnCoin
+    TurnLeaver CountGumBalls gumball
+}
+CountGumBalls {
+    CountIsZero Empty alarm
+    CountNotZero Full alarmOff
+}
+Empty {
+    Coin CountGumBalls returnCoin
+    TurnLeaver CountGumBalls alarm
+}
+}

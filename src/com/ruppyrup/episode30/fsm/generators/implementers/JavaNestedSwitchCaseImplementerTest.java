@@ -59,7 +59,7 @@ public class JavaNestedSwitchCaseImplementerTest {
     generatedFsm.accept(implementer);
     assertThat(implementer.getOutput(), equalTo("" +
         "package thePackage;\n" +
-        "public abstract class fsm implements acts {\n" +
+        "public abstract class fsmJava implements acts {\n" +
         "public abstract void unhandledTransition(String state, String event);\n" +
         "private enum State {I}\n" +
         "private enum Event {E}\n" +
@@ -95,7 +95,7 @@ public class JavaNestedSwitchCaseImplementerTest {
     NSCNode generatedFsm = generator.generate(sm);
     generatedFsm.accept(implementer);
     assertThat(implementer.getOutput(), startsWith("" +
-      "public abstract class fsm implements acts {\n"));
+      "public abstract class fsmJava implements acts {\n"));
   }
 
   @Test
@@ -111,7 +111,7 @@ public class JavaNestedSwitchCaseImplementerTest {
     generatedFsm.accept(implementer);
     String output = implementer.getOutput();
     assertThat(output, startsWith("" +
-      "public abstract class fsm {\n"));
+      "public abstract class fsmJava {\n"));
     assertThat(output, containsString("protected abstract void A();\n"));
   }
 

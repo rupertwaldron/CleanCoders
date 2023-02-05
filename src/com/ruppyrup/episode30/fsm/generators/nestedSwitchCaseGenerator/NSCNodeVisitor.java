@@ -1,6 +1,7 @@
 package com.ruppyrup.episode30.fsm.generators.nestedSwitchCaseGenerator;
 
 public interface NSCNodeVisitor {
+  String getCodeType();
   void visit(NSCNode.SwitchCaseNode switchCaseNode);
   void visit(NSCNode.CaseNode caseNode);
   void visit(NSCNode.FunctionCallNode functionCallNode);
@@ -11,4 +12,6 @@ public interface NSCNodeVisitor {
   void visit(NSCNode.HandleEventNode handleEventNode);
   void visit(NSCNode.EnumeratorNode enumeratorNode);
   void visit(NSCNode.DefaultCaseNode defaultCaseNode);
+
+    String getOutput();
 }

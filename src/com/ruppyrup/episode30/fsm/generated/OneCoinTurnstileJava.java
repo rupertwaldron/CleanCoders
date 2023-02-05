@@ -1,6 +1,6 @@
 package com.ruppyrup.episode30.fsm.generated;
 
-public abstract class OneCoinTurnstile {
+public abstract class OneCoinTurnstileJava {
     public abstract void unhandledTransition(String state, String event);
 
     private enum State {Locked, Unlocked}

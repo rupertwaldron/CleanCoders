@@ -24,7 +24,7 @@ import java.nio.file.Paths;
 import static com.ruppyrup.episode30.fsm.parser.ParserEvent.EOF;
 
 
-public class SMC {
+public class GumBallSMC {
     public static void main(String[] args) throws IOException {
         if (args.length == 0) throw new RuntimeException("You must choose Java or Kotlin as a command line argument");
         new SmcCompiler(args[0]).run();
@@ -44,7 +44,7 @@ public class SMC {
             javaPackage = "com.ruppyrup.episode30.fsm.generated";
             outputDirectory = "src/com/ruppyrup/episode30/fsm/generated";
 
-            String fileName = "src/com/ruppyrup/episode30/fsm/OneCoinTurnstile.txt";
+            String fileName = "src/com/ruppyrup/episode30/fsm/GumBall.txt";
             String smContent = new String(Files.readAllBytes(Paths.get(fileName)));
 
             SyntaxBuilder syntaxBuilder = new SyntaxBuilder();

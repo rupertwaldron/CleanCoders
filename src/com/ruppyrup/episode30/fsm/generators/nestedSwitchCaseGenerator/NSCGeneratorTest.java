@@ -57,6 +57,11 @@ public class NSCGeneratorTest {
   }
 
   private class EmptyVisitor implements NSCNodeVisitor {
+    @Override
+    public String getCodeType() {
+      return null;
+    }
+
     public void visit(SwitchCaseNode switchCaseNode) {
 
     }
@@ -94,6 +99,11 @@ public class NSCGeneratorTest {
       output += " default unhandled;";
     }
 
+    @Override
+    public String getOutput() {
+      return null;
+    }
+
     public void visit(FSMClassNode fsmClassNode) {
       fsmClassNode.delegators.accept(this);
       fsmClassNode.stateEnum.accept(this);
@@ -115,7 +125,7 @@ public class NSCGeneratorTest {
     public void OneTransition() throws Exception {
       assertGenerated(
         "{I e I a}",
-        "s state {case I {s event {case e {setState(State.I) a() } default unhandled;}}}");
+        "s state {case State.I {s event {case Event.e {setState(State.I) a() } default unhandled;}}}");
     }
 
     @Test
@@ -123,8 +133,8 @@ public class NSCGeneratorTest {
       assertGenerated("{I {e1 S a1} S {e2 I a2}}",
         "" +
           "s state {" +
-          "case I {s event {case e1 {setState(State.S) a1() } default unhandled;}}" +
-          "case S {s event {case e2 {setState(State.I) a2() } default unhandled;}}" +
+          "case State.I {s event {case Event.e1 {setState(State.S) a1() } default unhandled;}}" +
+          "case State.S {s event {case Event.e2 {setState(State.I) a2() } default unhandled;}}" +
           "}");
     }
 
@@ -140,10 +150,10 @@ public class NSCGeneratorTest {
           "}",
         "" +
           "s state {" +
-          "case I {s event {case e1 {setState(State.S) a1() }" +
-          "case e2 {setState(State.I) a2() } default unhandled;}}" +
-          "case S {s event {case e1 {setState(State.I) a3() }" +
-          "case e2 {setState(State.S) a4() } default unhandled;}}}");
+          "case State.I {s event {case Event.e1 {setState(State.S) a1() }" +
+          "case Event.e2 {setState(State.I) a2() } default unhandled;}}" +
+          "case State.S {s event {case Event.e1 {setState(State.I) a3() }" +
+          "case Event.e2 {setState(State.S) a4() } default unhandled;}}}");
     }
   } // SwitchCase Tests.
 
