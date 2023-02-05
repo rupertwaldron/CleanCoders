@@ -71,8 +71,9 @@ public class GumBallJavaTest extends GumBallJava {
 
   @Override
   protected void gumball() {
-    gumballs--;
     actions += "G";
+    if(--gumballs <= 0) CountIsZero();
+    else CountNotZero();
   }
 
   @Override
@@ -83,12 +84,5 @@ public class GumBallJavaTest extends GumBallJava {
   @Override
   protected void returnCoin() {
     actions += "R";
-  }
-
-  @Override
-  public void TurnLeaver() {
-    super.TurnLeaver();
-    if( gumballs <= 0) CountIsZero();
-    else CountNotZero();
   }
 }
