@@ -1,4 +1,4 @@
-package com.ruppyrup.episode32.singleton.monostate;
+package com.ruppyrup.episode32.monostate;
 
 
 
@@ -40,7 +40,6 @@ class MonostateServiceRegistry {
   public Service getService(String name) {
     return services.get(name);
   }
-
 }
 
 class Service {}
