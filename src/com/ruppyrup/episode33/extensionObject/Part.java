@@ -2,8 +2,6 @@ package com.ruppyrup.episode33.extensionObject;
 
 
 
-import com.ruppyrup.episode33.extensionObject.explosion.PartExtension;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +16,14 @@ public abstract class Part {
   }
 
   public abstract String getInfo();
+
+  public int getPartId() {
+    return partId;
+  }
+
+  public void setPartId(int partId) {
+    this.partId = partId;
+  }
 
   public void addExtension(String key, PartExtension value) {
     extensions.put(key, value);
